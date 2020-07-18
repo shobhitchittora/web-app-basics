@@ -1,8 +1,21 @@
-const { https, path, fs, env } = require('./lib/loadModules')(
+const {
+  https,
+  path,
+  fs,
+  env,
+  middleware,
+  logger,
+  smile,
+  render
+} = require('./lib/loadModules')(
   'https',
   'path',
   'fs',
-  { path: './lib/env', as: 'env' }
+  { path: './lib/env', as: 'env' },
+  { path: './lib/middleware', as: 'middleware' },
+  { path: './lib/middleware/logger', as: 'logger' },
+  { path: './lib/middleware/smile', as: 'smile' },
+  { path: './lib/middleware/render', as: 'render' }
 )
 
 const PORT = process.env.PORT || 8080;
@@ -17,12 +30,18 @@ try {
   }
 
   https.createServer(HTTPS_OPTIONS, function handleHttpsServer(req, res) {
-    res.writeHead(200);
-    res.end('Hello world\n');
+
+    middleware(req, res)
+      .chain(
+        logger,
+        smile,
+        render
+      );
+
   }).listen(PORT, function listening() {
     console.log(`https server Running on ${PORT}`);
   });
-  
+
 } catch (e) {
   console.error(e);
 }
