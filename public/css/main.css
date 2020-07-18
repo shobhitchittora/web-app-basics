@@ -38,37 +38,41 @@ span {
   width: 100%;
   display: flex;
 }
-.app-title {
+#app-title {
   text-align: center;
   padding: 2px 8px;
   font-size: 1.5em;
+  cursor: pointer;
+  height: min-content;
 }
 
-.app-title svg{
+#app-title svg{
   font-size: 4em;
   fill: #ffeb3b;
   width: 50px;
   height: 50px;
 }
 
-.notes-list-panel {
+#notes-list-panel {
   width: 25%;
   height: 100%;
   border: 1px solid #666;
 }
 
-.notes-list-panel .list-item {
+#notes-list-panel .list-item {
   border-bottom: 1px solid #666;
   padding: 2px 10px;
+  cursor: pointer;
 }
 
-.notes-view {
+/* helps to get pointer event on parent only */
+#notes-list-panel .list-item  * {
+  pointer-events: none
+}
+
+#notes-view {
   width: 75%;
   border: 1px solid #666;
   border-left: none;
   padding: 2px 10px;
-}
-
-.logo {
-  background-color: red;
 }

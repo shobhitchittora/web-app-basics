@@ -42,7 +42,6 @@ function sendFile(res, filepath) {
     })
     .catch(console.error);
 
-
 }
 
 module.exports = sendFile;

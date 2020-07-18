@@ -1,11 +1,13 @@
 const {
   middleware,
   responseHeaders,
-  sendFile
-} = require('../loadModules')(
+  sendFile,
+  controllers
+} = require('../../lib/loadModules')(
   { path: './lib//middleware', as: 'middleware' },
   { path: './lib/responseHeaders', as: 'responseHeaders' },
-  { path: './lib/middleware/static', as: 'sendFile' }
+  { path: './lib/middleware/static', as: 'sendFile' },
+  { path: './src/controllers', as: 'controllers' }
 );
 
 const rules = {
@@ -17,7 +19,8 @@ const rules = {
     '/css/main.css': { static: '/css/main.css' },
     '/js/main.js': { static: '/js/main.js' },
     '/css/fonts/Cairo-Regular.ttf': { static: '/css/fonts/Cairo-Regular.ttf' },
-    '/img/icon.svg': { static: '/img/icon.svg' }
+    '/img/icon.svg': { static: '/img/icon.svg' },
+    '/notes': { controller: controllers.getNotes }
   },
   'POST': {
     '/': { controller: '' }
@@ -63,11 +66,20 @@ function router(req, res, middlewareChain = []) {
 
 }
 
-function render({ static: filename }) {
+function render({ static: filename, controller }) {
   return function (req, res) {
     if (filename) {
       responseHeaders(req, res);
       sendFile(res, filename);
+    }
+
+    if (controller) {
+      const result = JSON.stringify(controller());
+      responseHeaders(req, res);
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Length', result.length);
+      res.writeHead(200);
+      res.end(result);
     }
   }
 }

@@ -3,17 +3,17 @@ const {
   path,
   fs,
   env,
-  router,
   logger,
-  smile
+  smile,
+  router,
 } = require('./lib/loadModules')(
   'https',
   'path',
   'fs',
   { path: './lib/env', as: 'env' },
-  { path: './lib/router', as: 'router' },
   { path: './lib/middleware/logger', as: 'logger' },
-  { path: './lib/middleware/smile', as: 'smile' }
+  { path: './lib/middleware/smile', as: 'smile' },
+  { path: './src/router', as: 'router' },
 )
 
 const PORT = process.env.PORT || 8080;
