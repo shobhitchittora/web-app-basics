@@ -33,11 +33,12 @@ span {
 
 /* -------  PAGE SPECIFIC CSS   ----------- */
 
-#app-container{
+#app-container {
   height: 100%;
   width: 100%;
   display: flex;
 }
+
 #app-title {
   text-align: center;
   padding: 2px 8px;
@@ -46,7 +47,7 @@ span {
   height: min-content;
 }
 
-#app-title svg{
+#app-title svg {
   font-size: 4em;
   fill: #ffeb3b;
   width: 50px;
@@ -65,8 +66,12 @@ span {
   cursor: pointer;
 }
 
+.active {
+  background: #673ab7;
+}
+
 /* helps to get pointer event on parent only */
-#notes-list-panel .list-item  * {
+#notes-list-panel .list-item * {
   pointer-events: none
 }
 

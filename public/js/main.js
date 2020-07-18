@@ -29,16 +29,30 @@ const helpers = (function helpers() {
     return container;
   }
 
-  function renderNotesList(notes) {
+  function clearNotesList() {
     const listContainer = document.getElementById('notes-list-panel');
     listContainer.innerHTML = ''; //Clear the current content
 
+    return listContainer
+  }
+
+  function renderNotesList(notes) {
+    const listContainer = clearNotesList();
+
     listContainer.addEventListener('click', function handleNotesClick(ev) {
-      const id = ev.target.getAttribute('data-id');
+      const selectedID = ev.target.getAttribute('data-id');
 
       const contentContainer = document.getElementById('notes-view');
       contentContainer.innerText = '';
-      contentContainer.innerText = notes.filter(({ id: ID }) => id == ID)[0].content;
+      notes.forEach(({ id, content }) => {
+        if (selectedID == id) {
+          contentContainer.innerText = content;
+          document.querySelector(`div[data-id='${id}']`).classList.add('active');
+        } else {
+          document.querySelector(`div[data-id='${id}']`).classList.remove('active');
+        }
+      });
+
     });
 
     if (notes && notes.length) {
@@ -52,27 +66,27 @@ const helpers = (function helpers() {
   }
 
   return {
+    clearNotesList,
     renderNotesList,
     appTitle
   }
 })();
 
 const app = (function app(helpers) {
-  const { appTitle, renderNotesList } = helpers;
+  const { appTitle, renderNotesList, clearNotesList } = helpers;
 
   window.addEventListener('DOMContentLoaded', main, true);
 
-  function fetchNotes() {
-    fetch('/notes')
+  async function fetchNotes() {
+    return fetch('/notes')
       .then(res => res.json())
-      .then(({ notes }) => {
-        renderNotesList(notes);
-      })
       .catch(console.error);
   }
 
-  function main() {
+  async function main() {
     appTitle();
-    fetchNotes();
+    clearNotesList();
+    const { notes } = await fetchNotes();
+    renderNotesList(notes);
   }
 })(helpers);
