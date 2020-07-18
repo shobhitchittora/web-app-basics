@@ -1,0 +1,14 @@
+{
+  "name": "notes-app",
+  "version": "0.1.0",
+  "description": "A super simple and fast notes app.",
+  "main": "index.js",
+  "scripts": {
+    "perf": "echo perf",
+    "start": "node server",
+    "test": "echo test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
