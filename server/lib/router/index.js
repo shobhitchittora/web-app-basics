@@ -16,6 +16,8 @@ const rules = {
     '/404': { static: '404.html' },
     '/css/main.css': { static: '/css/main.css' },
     '/js/main.js': { static: '/js/main.js' },
+    '/css/fonts/Cairo-Regular.ttf': { static: '/css/fonts/Cairo-Regular.ttf' },
+    '/img/icon.svg': { static: '/img/icon.svg' }
   },
   'POST': {
     '/': { controller: '' }

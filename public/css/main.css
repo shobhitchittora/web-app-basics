@@ -1,9 +1,74 @@
+/* -------  FONTS  ----------- */
+
+@font-face {
+  font-family: 'Cairo Regular';
+  src: url(fonts/Cairo-Regular.ttf);
+}
+
+/* -------  GENERAL CSS   ----------- */
+
 html {
   width: 100%;
   height: 100%;
 }
 
 body {
+  margin: 0;
   width: 100%;
   height: 100%;
+  background-color: #212121;
+  color: #FAFAFA;
+  font-family: 'Cairo Regular';
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+span {
+  margin: 0;
+  padding: 0;
+}
+
+/* -------  PAGE SPECIFIC CSS   ----------- */
+
+#app-container{
+  height: 100%;
+  width: 100%;
+  display: flex;
+}
+.app-title {
+  text-align: center;
+  padding: 2px 8px;
+  font-size: 1.5em;
+}
+
+.app-title svg{
+  font-size: 4em;
+  fill: #ffeb3b;
+  width: 50px;
+  height: 50px;
+}
+
+.notes-list-panel {
+  width: 25%;
+  height: 100%;
+  border: 1px solid #666;
+}
+
+.notes-list-panel .list-item {
+  border-bottom: 1px solid #666;
+  padding: 2px 10px;
+}
+
+.notes-view {
+  width: 75%;
+  border: 1px solid #666;
+  border-left: none;
+  padding: 2px 10px;
+}
+
+.logo {
+  background-color: red;
 }

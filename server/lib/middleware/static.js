@@ -15,7 +15,9 @@ const contentTypeMap = {
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
-  '.json': 'application/json'
+  '.ttf': 'font/ttf',
+  '.json': 'application/json',
+  '.svg': 'image/svg+xml',
 }
 
 function sendFile(res, filepath) {
