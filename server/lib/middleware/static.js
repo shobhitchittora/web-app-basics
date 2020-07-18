@@ -35,6 +35,8 @@ function sendFile(res, filepath) {
 
       res.writeHead(200);
       stream.pipe(res);
+      
+      stream.on('end', () => res.end());
     })
     .catch(console.error);
 
