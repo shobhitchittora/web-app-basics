@@ -58,10 +58,10 @@ function sendFile(res, filepath) {
       // compress contentStream
       contentStream = contentStream.pipe(zlib.createBrotliCompress());
 
-      // get stream length by converting to buffer
+      // get stream length
+
       streamToBuffer(contentStream)
         .then((buffer) => {
-          
           res.setHeader('Content-Length', Buffer.byteLength(buffer));
           res.writeHead(200);
           contentStream = bufferToStream(buffer);
