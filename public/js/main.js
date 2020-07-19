@@ -6,7 +6,7 @@ const helpers = (function helpers() {
       })
   }
 
-  function renderNoteItem({ id, title, content }) {
+  function renderNoteItem({ id, title, content, lastModified }) {
     if (!id || !title || !content) {
       throw Error('ITEM EMPTY');
       return;
@@ -32,21 +32,19 @@ const helpers = (function helpers() {
   function clearNotesList() {
     const listContainer = document.getElementById('notes-list-panel');
     listContainer.innerHTML = ''; //Clear the current content
-
     return listContainer
   }
 
-  function renderNotesList(notes) {
-    const listContainer = clearNotesList();
+  function handleClickItem(listContainer, notes) {
 
     listContainer.addEventListener('click', function handleNotesClick(ev) {
       const selectedID = ev.target.getAttribute('data-id');
 
       const contentContainer = document.getElementById('notes-view');
       contentContainer.innerText = '';
-      notes.forEach(({ id, content }) => {
+      notes.forEach(({ id, content, lastModified }) => {
         if (selectedID == id) {
-          contentContainer.innerText = content;
+          contentContainer.innerText = content + lastModified;
           document.querySelector(`div[data-id='${id}']`).classList.add('active');
         } else {
           document.querySelector(`div[data-id='${id}']`).classList.remove('active');
@@ -54,6 +52,11 @@ const helpers = (function helpers() {
       });
 
     });
+  }
+  function renderNotesList(notes) {
+    const listContainer = clearNotesList();
+
+    handleClickItem(listContainer, notes);
 
     if (notes && notes.length) {
       notes.forEach(note => {
@@ -65,15 +68,31 @@ const helpers = (function helpers() {
     }
   }
 
+
+  function addNote() {
+    document.getElementById('add-note')
+      .addEventListener('click', function handleAddClick() {
+        console.log('ADD NOTE');
+      });
+  }
+
+  function deleteNote() {
+    document.getElementById('delete-note')
+      .addEventListener('click', function handleDeleteClick() {
+        console.log('DELETE NOTE');
+      });
+  }
   return {
     clearNotesList,
     renderNotesList,
+    addNote,
+    deleteNote,
     appTitle
   }
 })();
 
 const app = (function app(helpers) {
-  const { appTitle, renderNotesList, clearNotesList } = helpers;
+  const { appTitle, renderNotesList, clearNotesList, addNote, deleteNote } = helpers;
 
   window.addEventListener('DOMContentLoaded', main, true);
 
@@ -85,6 +104,8 @@ const app = (function app(helpers) {
 
   async function main() {
     appTitle();
+    addNote();
+    deleteNote();
     clearNotesList();
     const { notes } = await fetchNotes();
     renderNotesList(notes);

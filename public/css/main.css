@@ -47,12 +47,28 @@ span {
   height: min-content;
 }
 
-#app-title svg {
+#app-title #logo svg {
   font-size: 4em;
   fill: #ffeb3b;
   width: 50px;
   height: 50px;
 }
+
+
+#app-func-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#app-notes-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
 
 #notes-list-panel {
   width: 25%;
@@ -80,4 +96,23 @@ span {
   border: 1px solid #666;
   border-left: none;
   padding: 2px 10px;
+}
+
+#notes-toolbar {
+  padding: 2px 10px;
+  border: 1px solid #666;
+  border-bottom: none;
+}
+
+#delete-note,
+#add-note,
+#auto-save {
+  padding: 2px 8px;
+  cursor: crosshair;
+}
+
+#delete-note svg,
+#add-note svg,
+#auto-save svg {
+  fill: #ffeb3b;
 }
