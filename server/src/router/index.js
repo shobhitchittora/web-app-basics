@@ -1,14 +1,19 @@
+const zlib = require('zlib');
+
 const {
   middleware,
   responseHeaders,
   sendFile,
-  controllers
+  controllers,
+  streamUtils
 } = require('../../lib/loadModules')(
   { path: './lib//middleware', as: 'middleware' },
   { path: './lib/responseHeaders', as: 'responseHeaders' },
   { path: './lib/middleware/static', as: 'sendFile' },
-  { path: './src/controllers', as: 'controllers' }
+  { path: './src/controllers', as: 'controllers' },
+  { path: './lib/utils/stream-utils', as: 'streamUtils' }
 );
+
 
 const rules = {
   'GET': {
@@ -66,6 +71,43 @@ function router(req, res, middlewareChain = []) {
 
 }
 
+function compressAndSend(req, res, result) {
+  const ORIGINAL_SIZE = result.length;
+  responseHeaders(req, res);
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Encoding', 'br');
+
+
+  let contentStream = streamUtils.stringToStream(result);
+
+  contentStream = contentStream.pipe(
+    zlib.createBrotliCompress(
+      {
+        chunkSize: 32 * 1024,
+        params: {
+          [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_TEXT,
+          [zlib.constants.BROTLI_PARAM_QUALITY]: 10,
+          [zlib.constants.BROTLI_PARAM_SIZE_HINT]: ORIGINAL_SIZE
+        }
+      }
+    )
+  );
+
+
+  streamUtils.streamToBuffer(contentStream)
+    .then((buffer) => {
+
+      res.setHeader('Content-Length', Buffer.byteLength(buffer));
+      res.writeHead(200);
+      contentStream = streamUtils.bufferToStream(buffer);
+      contentStream.pipe(res);
+
+      contentStream.on('end', () => res.end());
+    })
+    .catch(console.error);
+
+}
+
 function render({ static: filename, controller }) {
   return function (req, res) {
     if (filename) {
@@ -75,11 +117,7 @@ function render({ static: filename, controller }) {
 
     if (controller) {
       const result = JSON.stringify(controller());
-      responseHeaders(req, res);
-      res.setHeader('Content-Type', 'application/json');
-      res.setHeader('Content-Length', result.length);
-      res.writeHead(200);
-      res.end(result);
+      compressAndSend(req, res, result);
     }
   }
 }

@@ -5,7 +5,7 @@ function frameguard() {
 }
 
 function xpoweredby() {
-  return { 'X-Powered-By': 'PHP 7.4.7' };  // Just to mess with people
+  return { 'X-Powered-By': 'PHP/7.4.7' };  // Just to mess with people
 }
 
 function hsts() {

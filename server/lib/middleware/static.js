@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const promisify = require('util').promisify;
-const { Duplex } = require('stream');
+const { Readable } = require('stream');
+const { streamToBuffer, bufferToStream } = require('../utils/stream-utils');
+const streamUtils = require('../utils/stream-utils');
 
 const readFile = promisify(fs.readFile);
 
@@ -21,23 +23,6 @@ const contentTypeMap = {
   '.svg': 'image/svg+xml',
 }
 
-function streamToBuffer(stream) {
-  return new Promise((resolve, reject) => {
-    let buffers = [];
-    stream.on('error', reject);
-    stream.on('data', (data) => buffers.push(data));
-    stream.on('end', () => resolve(Buffer.concat(buffers)));
-  });
-}
-
-function bufferToStream(buffer){
-  let stream = new Duplex();
-  stream.push(buffer);
-  stream.push(null);
-
-  return stream;
-}
-
 function sendFile(res, filepath) {
 
   // default encoding for readFile is null
@@ -51,17 +36,29 @@ function sendFile(res, filepath) {
       res.setHeader('Content-Encoding', 'br');
 
 
-      let contentStream = new Duplex();
-      contentStream.push(contentBuffer);
-      contentStream.push(null);
+      let contentStream = streamUtils.bufferToStream(contentBuffer);
+
+
+      let ORIGINAL_SIZE = Buffer.byteLength(contentBuffer);
 
       // compress contentStream
-      contentStream = contentStream.pipe(zlib.createBrotliCompress());
+      contentStream = contentStream.pipe(
+        zlib.createBrotliCompress(
+          {
+            chunkSize: 32 * 1024,
+            params: {
+              [zlib.constants.BROTLI_PARAM_MODE]: zlib.constants.BROTLI_MODE_TEXT,
+              [zlib.constants.BROTLI_PARAM_QUALITY]: 10,
+              [zlib.constants.BROTLI_PARAM_SIZE_HINT]: ORIGINAL_SIZE
+            }
+          }
+        )
+      );
 
       // get stream length by converting to buffer
       streamToBuffer(contentStream)
         .then((buffer) => {
-          
+
           res.setHeader('Content-Length', Buffer.byteLength(buffer));
           res.writeHead(200);
           contentStream = bufferToStream(buffer);
