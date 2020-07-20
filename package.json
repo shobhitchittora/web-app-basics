@@ -6,9 +6,13 @@
   "scripts": {
     "perf": "echo perf",
     "start": "node server",
+    "api": "node data-serv",
     "test": "echo test"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "pg": "^8.3.0"
+  }
 }
