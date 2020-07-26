@@ -109,16 +109,27 @@ function compressAndSend(req, res, result) {
 }
 
 function render({ static: filename, controller }) {
-  return function (req, res) {
+  return async function (req, res) {
     if (filename) {
       responseHeaders(req, res);
       sendFile(res, filename);
     }
 
-    if (controller) {
-      const result = JSON.stringify(controller());
-      compressAndSend(req, res, result);
+    try {
+      if (controller) {
+        const result = await controller();
+        if (result && typeof result === 'string') {
+          compressAndSend(req, res, result);
+        } else {
+          compressAndSend(req, res, JSON.stringify(result));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      res.writeHead(500);
+      res.end();
     }
+
   }
 }
 

@@ -1,4 +1,7 @@
 const helpers = (function helpers() {
+
+  const NEW_NOTE_ID = 'new-note';
+
   function appTitle() {
     document.getElementById('app-title')
       .addEventListener('click', function onClickTitle() {
@@ -6,9 +9,28 @@ const helpers = (function helpers() {
       })
   }
 
-  function renderNoteItem({ id, title, content, lastModified }) {
-    if (!id || !title || !content) {
-      throw Error('ITEM EMPTY');
+  function getFirstWord(string) {
+    if (!string) {
+      return '';
+    }
+
+    const MAX_TITLE_LENGTH = 12;
+    let candidate;
+
+    const splitArray = string.split(' ');
+    if (splitArray.length > 0) {
+      candidate = splitArray[0];
+    }
+
+    if (candidate.length > MAX_TITLE_LENGTH) {
+      candidate = candidate.substr(0, MAX_TITLE_LENGTH);
+    }
+    return candidate;
+  }
+
+  function renderNoteItem({ id, content, timestamp }) {
+    if (!id || !timestamp) {
+      throw Error('Item EMPTY or missing required value - id, timestamp');
       return;
     }
 
@@ -21,7 +43,7 @@ const helpers = (function helpers() {
     const heading = document.createElement('h3');
     const subheading = document.createElement('p');
 
-    heading.innerText = title;
+    heading.innerText = getFirstWord(content);
     subheading.innerText = content;
 
     container.appendChild(heading)
@@ -35,16 +57,30 @@ const helpers = (function helpers() {
     return listContainer
   }
 
+  function addToTopNotesList(node) {
+    const listContainer = document.getElementById('notes-list-panel');
+    listContainer.insertBefore(node, listContainer.firstChild);
+  }
+
   function handleClickItem(listContainer, notes) {
 
     listContainer.addEventListener('click', function handleNotesClick(ev) {
       const selectedID = ev.target.getAttribute('data-id');
 
+      // Handle Empty Add new Note
+      if(selectedID === NEW_NOTE_ID){
+        document.querySelector(`div[data-id='${NEW_NOTE_ID}']`).classList.add('active');
+      }else{
+        const newNoteElement = document.querySelector(`div[data-id='${NEW_NOTE_ID}']`);
+        newNoteElement &&  newNoteElement.classList.remove('active');
+      }
+
+      // Existing notes handling
       const contentContainer = document.getElementById('notes-view');
       contentContainer.innerText = '';
-      notes.forEach(({ id, content, lastModified }) => {
+      notes.forEach(({ id, content, timestamp }) => {
         if (selectedID == id) {
-          contentContainer.innerText = content + lastModified;
+          contentContainer.innerText = content + '\n' + timestamp;
           document.querySelector(`div[data-id='${id}']`).classList.add('active');
         } else {
           document.querySelector(`div[data-id='${id}']`).classList.remove('active');
@@ -69,17 +105,47 @@ const helpers = (function helpers() {
   }
 
 
+  function getActiveNote() {
+    const activeNote = document.querySelector('div.list-item.active');
+
+    if(activeNote){
+      return activeNote.getAttribute('data-id');
+    }
+
+    return null;
+  }
+
   function addNote() {
     document.getElementById('add-note')
       .addEventListener('click', function handleAddClick() {
-        console.log('ADD NOTE');
+
+        // Check if already in add mode
+        if (document.querySelector(`div[data-id=${NEW_NOTE_ID}]`)) {
+          console.log('ALREADY IN ADD MODE! You dummy!');
+          return;
+        }
+
+        const noteListItem = renderNoteItem({
+          id: NEW_NOTE_ID,
+          content: '',
+          timestamp: Date.now().toString()
+        });
+
+        addToTopNotesList(noteListItem);
+
       });
   }
 
   function deleteNote() {
     document.getElementById('delete-note')
       .addEventListener('click', function handleDeleteClick() {
-        console.log('DELETE NOTE');
+        const activeID = getActiveNote();
+        if(activeID){
+          console.log('DELETE NOTE - ', activeID);
+        }else{
+          console.log('NO NOTE SELECTED! You dummy!');
+        }
+        
       });
   }
   return {
