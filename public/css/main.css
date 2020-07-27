@@ -71,6 +71,7 @@ span {
 
 
 #notes-list-panel {
+  min-width: 220px;
   width: 25%;
   height: 100%;
   border: 1px solid #666;
@@ -96,7 +97,18 @@ span {
   width: 75%;
   border: 1px solid #666;
   border-left: none;
-  padding: 2px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+#notes-view .ql-toolbar * ,
+#notes-view .ql-toolbar svg{
+  color: white;
+  stroke: white;
+}
+
+#notes-view .ql-picker-item::before {
+  color: black;
 }
 
 #notes-toolbar {

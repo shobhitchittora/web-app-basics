@@ -44,7 +44,7 @@ const helpers = (function helpers() {
     const subheading = document.createElement('p');
 
     heading.innerText = getFirstWord(content);
-    subheading.innerText = content;
+    subheading.innerText = timestamp;
 
     container.appendChild(heading)
     container.appendChild(subheading);
@@ -68,20 +68,18 @@ const helpers = (function helpers() {
       const selectedID = ev.target.getAttribute('data-id');
 
       // Handle Empty Add new Note
-      if(selectedID === NEW_NOTE_ID){
+      if (selectedID === NEW_NOTE_ID) {
         document.querySelector(`div[data-id='${NEW_NOTE_ID}']`).classList.add('active');
-      }else{
+        window.quill.setText(content);
+      } else {
         const newNoteElement = document.querySelector(`div[data-id='${NEW_NOTE_ID}']`);
-        newNoteElement &&  newNoteElement.classList.remove('active');
+        newNoteElement && newNoteElement.classList.remove('active');
       }
 
-      // Existing notes handling
-      const contentContainer = document.getElementById('notes-view');
-      contentContainer.innerText = '';
-      notes.forEach(({ id, content, timestamp }) => {
+      notes.forEach(({ id, content }) => {
         if (selectedID == id) {
-          contentContainer.innerText = content + '\n' + timestamp;
           document.querySelector(`div[data-id='${id}']`).classList.add('active');
+          window.quill.setText(content);
         } else {
           document.querySelector(`div[data-id='${id}']`).classList.remove('active');
         }
@@ -108,7 +106,7 @@ const helpers = (function helpers() {
   function getActiveNote() {
     const activeNote = document.querySelector('div.list-item.active');
 
-    if(activeNote){
+    if (activeNote) {
       return activeNote.getAttribute('data-id');
     }
 
@@ -128,7 +126,7 @@ const helpers = (function helpers() {
         const noteListItem = renderNoteItem({
           id: NEW_NOTE_ID,
           content: '',
-          timestamp: Date.now().toString()
+          timestamp: new Date().toJSON()
         });
 
         addToTopNotesList(noteListItem);
@@ -140,12 +138,12 @@ const helpers = (function helpers() {
     document.getElementById('delete-note')
       .addEventListener('click', function handleDeleteClick() {
         const activeID = getActiveNote();
-        if(activeID){
+        if (activeID) {
           console.log('DELETE NOTE - ', activeID);
-        }else{
+        } else {
           console.log('NO NOTE SELECTED! You dummy!');
         }
-        
+
       });
   }
   return {
@@ -161,6 +159,18 @@ const app = (function app(helpers) {
   const { appTitle, renderNotesList, clearNotesList, addNote, deleteNote } = helpers;
 
   window.addEventListener('DOMContentLoaded', main, true);
+
+  window.onload = () => {
+    var quill = new Quill('#editor', {
+      // debug: 'info',
+      readOnly: false,
+      theme: 'snow',
+      bounds: document.getElementById('notes-view'),
+      scrollingContainer: document.getElementById('notes-view')
+    });
+
+    window.quill = quill;
+  };
 
   async function fetchNotes() {
     return fetch('/notes')

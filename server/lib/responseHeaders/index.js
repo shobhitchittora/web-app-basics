@@ -36,7 +36,7 @@ function dnsPrefetch() {
 function cspStrict() {
   // For site which uses only their own content 
   // no 3rd party scrips or resources
-  return { 'Content-Security-Policy': "default-src 'self'" };
+  return { 'Content-Security-Policy': "'self' cdn.quilljs.com" };
 }
 
 const responseHeader = {
