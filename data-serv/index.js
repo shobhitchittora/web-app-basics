@@ -2,17 +2,34 @@ const http = require('http');
 const promisify = require('util').promisify;
 
 const loadDB = require('./lib/loadDB');
-const { getAllNotes } = require('./api');
+const { getAllNotes, addNote } = require('./api');
+const { streamToBuffer } = require('../server/lib/utils/stream-utils');
 
 const pool = loadDB();
 runHttpServer();
 
 async function router(req, res) {
+  const query = pool.query.bind(pool);
+
+  console.log('-------------');
+  console.log(req.url);
+  console.log('\n\n');
+
   try {
     switch (req.url) {
       case '/notes': {
 
-        const { rows } = await getAllNotes(pool.query.bind(pool));
+        const { rows } = await getAllNotes(query);
+        res.writeHead(200);
+        res.end(JSON.stringify(rows));
+
+        break;
+      }
+      case '/add': {
+
+        const dataBuffer = await streamToBuffer(req);
+
+        const { rows } = await addNote(query, dataBuffer);
         res.writeHead(200);
         res.end(JSON.stringify(rows));
 

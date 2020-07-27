@@ -146,17 +146,45 @@ const helpers = (function helpers() {
 
       });
   }
+
+  function saveNote() {
+    document.getElementById('save-note')
+      .addEventListener('click', function handleSaveClick() {
+        const activeID = getActiveNote();
+        if (activeID) {
+          console.log('SAVE NOTE - ', activeID);
+          
+          const data = {
+            content: window.quill.getText(),
+            timestamp: new Date().toUTCString()
+          };
+
+          fetch('/add', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+          })
+        } else {
+          console.log('NO NOTE SELECTED! You dummy!');
+        }
+
+      });
+  }
+
   return {
     clearNotesList,
     renderNotesList,
     addNote,
     deleteNote,
+    saveNote,
     appTitle
   }
 })();
 
 const app = (function app(helpers) {
-  const { appTitle, renderNotesList, clearNotesList, addNote, deleteNote } = helpers;
+  const { appTitle, renderNotesList, clearNotesList, addNote, deleteNote, saveNote } = helpers;
 
   window.addEventListener('DOMContentLoaded', main, true);
 
@@ -182,6 +210,7 @@ const app = (function app(helpers) {
     appTitle();
     addNote();
     deleteNote();
+    saveNote();
     clearNotesList();
     const { notes } = await fetchNotes();
     renderNotesList(notes);

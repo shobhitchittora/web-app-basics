@@ -1,6 +1,12 @@
 const http = require('http');
 const { streamToBuffer } = require('../../lib/utils/stream-utils');
 
+const API_SERVER_PROTOCOL = 'http://';
+const API_SERVER_HOST = '127.0.0.1';
+const API_SERVER_PORT = '4000';
+
+const API_SERVER_URL = `${API_SERVER_PROTOCOL}${API_SERVER_HOST}:${API_SERVER_PORT}`;
+
 const mockNotes = {
   'notes': [
 
@@ -30,7 +36,7 @@ const mockNotes = {
 
 async function getNotes() {
   return new Promise((resolve, reject) => {
-    const request = http.get('http://127.0.0.1:4000/notes', function handleNotesController(responseStream) {
+    const request = http.get(API_SERVER_URL + '/notes', function handleNotesController(responseStream) {
 
       if (responseStream && responseStream.statusCode !== 200) {
         reject('No response from API');
@@ -50,6 +56,46 @@ async function getNotes() {
   });
 }
 
+
+async function addNote(req, res) {
+  return new Promise(async (resolve, reject) => {
+
+    const postData = await streamToBuffer(req);
+
+    const options = {
+      hostname: API_SERVER_HOST,
+      port: API_SERVER_PORT,
+      path: '/add',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(postData)
+      }
+    }
+    
+    // Api server request
+    const request = http.request(options, function handleNotesController(responseStream) {
+
+      if (responseStream && responseStream.statusCode !== 200) {
+        reject('No response from API');
+      }
+
+      streamToBuffer(responseStream).then(buffer => {
+        const result = buffer.toString();
+        resolve(
+          {
+            'notes': JSON.parse(result)
+          }
+        );
+      }).catch(reject);
+    });
+
+    request.write(postData);
+    request.on('error', reject);
+  });
+}
+
 module.exports = {
-  getNotes
+  getNotes,
+  addNote
 }

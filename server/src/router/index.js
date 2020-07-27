@@ -28,7 +28,8 @@ const rules = {
     '/notes': { controller: controllers.getNotes }
   },
   'POST': {
-    '/': { controller: '' }
+    '/': { controller: '' },
+    '/add': { controller: controllers.addNote }
   },
   'HEAD': {},
   'PUT': {}
@@ -117,7 +118,7 @@ function render({ static: filename, controller }) {
 
     try {
       if (controller) {
-        const result = await controller();
+        const result = await controller(req, res);
         if (result && typeof result === 'string') {
           compressAndSend(req, res, result);
         } else {

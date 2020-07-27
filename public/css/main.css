@@ -121,7 +121,7 @@ span {
 
 #delete-note,
 #add-note,
-#auto-save {
+#save-note {
   padding: 8px;
   cursor: pointer;
   display: inline-flex;
@@ -132,13 +132,13 @@ span {
 
 #delete-note svg,
 #add-note svg,
-#auto-save svg {
+#save-note svg {
   fill: #ffeb3b;
 }
 
 
 #delete-note:hover,
 #add-note:hover,
-#auto-save:hover{
+#save-note:hover{
   background-color: #666;
 }

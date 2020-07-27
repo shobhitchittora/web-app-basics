@@ -1,3 +1,4 @@
 module.exports = {
-  getAllNotes: require('./getAllNotes')
+  getAllNotes: require('./getAllNotes'),
+  addNote: require('./addNote')
 }
