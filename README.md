@@ -29,3 +29,8 @@ This is a basic notes app, which support CRUD oprations. The rich text editor he
 ### Architecture
 
 The project has two parts one is the web server which hosts the basics of serving assets over https. The other part is the REST API server which basically connects to the database ( postgres ) and serves the data.
+
+
+### Screenshot
+
+<img src="https://github.com/shobhitchittora/web-app-basics/blob/master/screenshot/Screenshot.png">
