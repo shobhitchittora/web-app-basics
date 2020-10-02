@@ -21,6 +21,11 @@
 npm run api
 ```
 
+
+### What it is?
+This is a basic notes app, which support CRUD oprations. The rich text editor here is supported by [quilljs](https://quilljs.com/).
+
+
 ### Architecture
 
 The project has two parts one is the web server which hosts the basics of serving assets over https. The other part is the REST API server which basically connects to the database ( postgres ) and serves the data.
