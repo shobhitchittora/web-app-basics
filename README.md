@@ -20,3 +20,7 @@
 ```
 npm run api
 ```
+
+### Architecture
+
+The project has two parts one is the web server which hosts the basics of serving assets over https. The other part is the REST API server which basically connects to the database ( postgres ) and serves the data.
